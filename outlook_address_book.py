@@ -1,65 +1,80 @@
 import win32com.client
-import pyodbc
+import datetime
+import sql_server_tools
 
 out_App = win32com.client.gencache.EnsureDispatch("Outlook.Application")
 gal = out_App.Session.GetGlobalAddressList()
 entries = gal.AddressEntries
 
-global_address_items = []
-# print(type(gal))
+#wyczyść tabele roboczą
+trunc_comm = 'TRUNCATE TABLE [dbo].[Outlook_Address_Book_buff]'
+sql_server_tools.sql_server_trusted_conn_insert_stmt('PROC2016005\\PROC2016005', 'michal_work', trunc_comm)
+
+
+def variable_input(var):
+    if var == '':
+        output = 'brak danych'
+    else:
+        output = var
+    return output
+
+
 for entry in entries:
     user = entry.GetExchangeUser()
     try:
-        str_name = user.Name
+        name = variable_input(user.Name)
     except:
-        str_name = 'brak danych'
+        name = 'brak danych'
     try:
-        str_last_name = user.LastName
+        last_name = variable_input(user.LastName)
     except:
-        str_last_name = 'brak danych'
+        last_name = 'brak danych'
     try:
-        str_first_name = user.FirstName
+        first_name = variable_input(user.FirstName)
     except:
-        str_first_name = 'brak danych'
+        first_name = 'brak danych'
     try:
-        str_alias = user.Alias
+        alias = variable_input(user.Alias)
     except:
-        str_alias = 'brak danych'
+        alias = 'brak danych'
     try:
-        str_mail_address = user.PrimarySmtpAddress
+        mail_address = variable_input(user.PrimarySmtpAddress)
     except:
-        str_mail_address = 'brak danych'
+        mail_address = 'brak danych'
     try:
-        str_mobilephone = user.MobileTelephoneNumber
+        mobilePhone = variable_input(user.MobileTelephoneNumber)
     except:
-        str_mobilephone = 'brak danych'
+        mobilePhone = 'brak danych'
     try:
-        str_businessPhone = user.BusinessTelephoneNumber
+        businessPhone = variable_input(user.BusinessTelephoneNumber)
     except:
-        str_businessPhone = 'brak danych'
+        businessPhone = 'brak danych'
     try:
-        str_department = user.Department
+        department = variable_input(user.Department)
     except:
-        str_department = 'brak danych'
+        department = 'brak danych'
     try:
-        str_job_title = user.JobTitle
+        job_title = variable_input(user.JobTitle)
     except:
-        str_job_title = 'brak danych'
+        job_title = 'brak danych'
     try:
-        office_location = user.OfficeLocation
+        office_location = variable_input(user.OfficeLocation)
     except:
         office_location = 'brak danych'
 
-
-    #except:
-        #str_location
-    # print(str_name, str_alias, str_mail_address, str_mobilephone, str_businessPhone, str_department, str_job_title)
-
-# SQL_CNXN = pyodbc.connect('DRIVER={SQL Server Native Client 11.0};SERVER=PROC2016005\PROC2016005; '
- #                         'DATABASE=CIC_raportowanie; Trusted_Connection=yes', autocommit=True, timeout=0)
-
-# print(type(SQL_CNXN))
-
-
-
-
+    comm_str = f"""INSERT INTO [dbo].[Outlook_Address_Book_buff] (
+       [Name]
+      ,[FirstName]
+      ,[LastName]
+      ,[Alias]
+      ,[MailAddress]
+      ,[MobilePhone]
+      ,[BusinessPhone]
+      ,[Department]
+      ,[JobTitle]
+      ,[OfficeLocation]
+      ,[data_raportu])
+VALUES
+('{name}', '{last_name}', '{first_name}', '{alias}', '{mail_address}', '{mobilePhone}', '{businessPhone}', '{department}', '{job_title}', '{office_location}', '{datetime.date.today()}')"""
+    if name not in ('WOLF Administracja', 'brak danych'):
+        sql_server_tools.sql_server_trusted_conn_insert_stmt('PROC2016005\\PROC2016005', 'michal_work', comm_str)
