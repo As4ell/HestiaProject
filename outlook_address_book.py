@@ -75,6 +75,6 @@ for entry in entries:
       ,[OfficeLocation]
       ,[data_raportu])
 VALUES
-('{name}', '{last_name}', '{first_name}', '{alias}', '{mail_address}', '{mobilePhone}', '{businessPhone}', '{department}', '{job_title}', '{office_location}', '{datetime.date.today()}')"""
+('{name}', '{first_name}', '{last_name}', '{alias}', '{mail_address}', '{mobilePhone}', '{businessPhone}', '{department}', '{job_title}', '{office_location}', '{datetime.date.today()}')"""
     if name not in ('WOLF Administracja', 'brak danych'):
         sql_server_tools.sql_server_trusted_conn_insert_stmt('PROC2016005\\PROC2016005', 'michal_work', comm_str)
