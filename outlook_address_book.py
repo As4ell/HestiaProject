@@ -22,6 +22,11 @@ def variable_input(var):
 for entry in entries:
     user = entry.GetExchangeUser()
     try:
+        user_manager = user.GetExchangeUserManager()
+    except:
+        user_manager = 'brak'
+
+    try:
         name = variable_input(user.Name)
     except:
         name = 'brak danych'
@@ -61,6 +66,10 @@ for entry in entries:
         office_location = variable_input(user.OfficeLocation)
     except:
         office_location = 'brak danych'
+    try:
+        manager = variable_input(user_manager.Name)
+    except:
+        manager = 'brak danych'
 
     comm_str = f"""INSERT INTO [dbo].[Outlook_Address_Book_buff] (
        [Name]
@@ -73,8 +82,9 @@ for entry in entries:
       ,[Department]
       ,[JobTitle]
       ,[OfficeLocation]
+      ,[Manager]
       ,[data_raportu])
 VALUES
-('{name}', '{first_name}', '{last_name}', '{alias}', '{mail_address}', '{mobilePhone}', '{businessPhone}', '{department}', '{job_title}', '{office_location}', '{datetime.date.today()}')"""
+('{name}', '{first_name}', '{last_name}', '{alias}', '{mail_address}', '{mobilePhone}', '{businessPhone}', '{department}', '{job_title}', '{office_location}', '{manager}', '{datetime.date.today()}')"""
     if name not in ('WOLF Administracja', 'brak danych'):
         sql_server_tools.sql_server_trusted_conn_insert_stmt('PROC2016005\\PROC2016005', 'michal_work', comm_str)
